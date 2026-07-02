@@ -1,0 +1,65 @@
+name: CI/CD - Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: docker build -t tailoring-app:latest .
+
+      - name: Save Docker image as tar
+        run: docker save tailoring-app:latest | gzip > tailoring-app.tar.gz
+
+      - name: Copy Docker image to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "tailoring-app.tar.gz"
+          target: "~/"
+
+      - name: Copy k8s manifests to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "k8s/"
+          target: "~/reactjs-project/"
+
+      - name: Deploy on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Load new Docker image into minikube
+            docker load < ~/tailoring-app.tar.gz
+            minikube image load tailoring-app:latest
+
+            # Apply latest k8s manifests
+            kubectl apply -f ~/reactjs-project/k8s/deployment.yml
+            kubectl apply -f ~/reactjs-project/k8s/service.yml
+
+            # Restart deployment to pick up new image
+            kubectl rollout restart deployment/tailoring-app
+
+            # Wait for rollout to complete
+            kubectl rollout status deployment/tailoring-app
+
+            # Cleanup tar file
+            rm -f ~/tailoring-app.tar.gz
