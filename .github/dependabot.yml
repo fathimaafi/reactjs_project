@@ -19,7 +19,3 @@ updates:
       # react-scripts major versions can have breaking changes, review manually
       - dependency-name: "react-scripts"
         update-types: ["version-update:semver-major"]
-    allow:
-      - dependency-name: "react"
-      - dependency-name: "react-dom"
-      - dependency-name: "react-scripts"
