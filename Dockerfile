@@ -1,8 +1,8 @@
 # Stage 1: Build
 FROM node:18-alpine AS builder
 WORKDIR /app
-COPY package.json ./
-RUN npm install
+COPY package.json package-lock.json ./
+RUN npm ci --prefer-offline --no-audit --no-fund
 COPY . .
 RUN npm run build
 
