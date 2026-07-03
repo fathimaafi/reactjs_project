@@ -28,6 +28,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          timeout: 60s
           source: "tailoring-app.tar.gz"
           target: "~/"
 
@@ -37,6 +39,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          timeout: 60s
           source: "k8s/"
           target: "~/reactjs-project/"
 
@@ -46,6 +50,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          timeout: 60s
           script: |
             # Load new Docker image into minikube
             docker load < ~/tailoring-app.tar.gz
