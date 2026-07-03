@@ -37,16 +37,3 @@ jobs:
 
             # Build Docker image on EC2
             sudo docker build -t tailoring-app:latest .
-
-            # Load image into minikube
-            minikube image load tailoring-app:latest
-
-            # Apply k8s manifests
-            kubectl apply -f k8s/deployment.yml
-            kubectl apply -f k8s/service.yml
-
-            # Restart deployment to pick up new image
-            kubectl rollout restart deployment/tailoring-app
-
-            # Wait for rollout to complete
-            kubectl rollout status deployment/tailoring-app
