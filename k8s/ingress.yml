@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tailoring-app-ingress
+  namespace: tailoring
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    # Optional: Add cert-manager annotation here if using Let's Encrypt later
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  # TLS Block for SSL
+  tls:
+  - hosts:
+    - YOUR_EXTERNAL_IP.nip.io
+    secretName: tailoring-app-tls-secret
+  rules:
+  - host: YOUR_EXTERNAL_IP.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tailoring-app-service
+            port:
+              number: 80
