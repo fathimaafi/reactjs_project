@@ -5,17 +5,10 @@ metadata:
   namespace: tailoring
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    # Optional: Add cert-manager annotation here if using Let's Encrypt later
-    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   ingressClassName: nginx
-  # TLS Block for SSL
-  tls:
-  - hosts:
-    - YOUR_EXTERNAL_IP.nip.io
-    secretName: tailoring-app-tls-secret
   rules:
-  - host: YOUR_EXTERNAL_IP.nip.io
+  - host: 13.61.18.132.nip.io
     http:
       paths:
       - path: /
