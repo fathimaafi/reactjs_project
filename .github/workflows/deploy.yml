@@ -34,6 +34,5 @@ jobs:
           timeout: 300s
           script: |
             cd ~/reactjs-project
-
             # Build Docker image on EC2
             sudo docker build -t tailoring-app:latest .
