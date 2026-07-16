@@ -5,10 +5,17 @@ metadata:
   namespace: tailoring
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - boutique.beework.in
+    secretName: tailoring-app-tls-secret
   rules:
-  - http:
+  - host: boutique.beework.in
+    http:
       paths:
       - path: /
         pathType: Prefix
